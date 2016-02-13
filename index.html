@@ -2,10 +2,21 @@
 
 <head>
   <script type="text/javascript" src="/main.js"></script>
+  <style media="screen">
+    body {
+      text-align: center;
+    }
+
+    canvas {
+      height: 80vh;
+      margin: 0 auto;
+    }
+  </style>
 </head>
 
-<body>
-  <canvas id="canvas" width="300" height="300"></canvas>
+<body onload="drawBoard();">
+  <h1>Demo Gameboard</h1>
+  <canvas id="gameboard" width="300" height="300"></canvas>
 </body>
 
 </html>
