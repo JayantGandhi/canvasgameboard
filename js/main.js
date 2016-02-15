@@ -1,3 +1,5 @@
+"use strict";
+
 window.onload = function() {
   var submit = document.getElementById('boardSizeSubmit'),
       select = document.getElementsByName('board_size');
@@ -7,13 +9,14 @@ window.onload = function() {
 
     initBoard('gameboard', size, size);
   }
-  
+
   var gameboard = initBoard('gameboard', 8, 8);
+  gameboard.current_player = gameboard.players['player2'];
 }
 
 function initBoard(boardId, rows, cols) {
-
   var gameboard = new Gameboard(boardId, rows, cols);
+
   gameboard.drawBoard();
   gameboard.drawPlayer(2,2, 'player2');
   return gameboard;

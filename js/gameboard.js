@@ -1,7 +1,14 @@
+"use strict";
 /**
 * Gameboard.js
 * Creates the Gameboard prototype
 */
+
+function Cell(row, col) {
+  this.row = row;
+  this.col = col;
+  this.gameEvent;
+}
 
 /**
  * Defines the Gameboard object
@@ -10,7 +17,7 @@
  * @param {[type]} cols    [description]
  * @param {[type]} players [description]
  */
-function Gameboard(id, rows, cols, players) {
+function Gameboard(id, rows, cols, players, current_player) {
   var id   = typeof id !== 'undefined' ? id : 'gameboard',
       rows = typeof rows !== 'undefined' ? rows : 5,
       cols = typeof cols !== 'undefined' ? cols : 5;
@@ -24,11 +31,21 @@ function Gameboard(id, rows, cols, players) {
     }
   }
 
-  this.board = document.getElementById(id);
-  this.ctx = this.board.getContext('2d');
-  this.cellHeight = this.board.height / rows;
-  this.cellWidth = this.board.width /cols;
+  this.canvas = document.getElementById(id);
+  this.board = [];
+  this.ctx = this.canvas.getContext('2d');
+  this.cellHeight = this.canvas.height / rows;
+  this.cellWidth = this.canvas.width /cols;
   this.players = players;
+  this.current_player = current_player;
+
+  for (var i = 0; i <= rows; i++) {
+    this.board.push([i])
+
+    for (var j = 1; j <= cols; j++) {
+      this.board[i].push(new Cell(i, j));
+    }
+  }
 }
 
 /**
@@ -37,7 +54,7 @@ function Gameboard(id, rows, cols, players) {
  */
 Gameboard.prototype.drawBoard = function () {
   this.ctx.beginPath();
-  this.ctx.clearRect(0, 0, this.board.width, this.board.height);
+  this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
   for (var i = 0; i <= 300; i+= this.cellHeight) { //horizontal lines
     this.ctx.moveTo(0, i);
@@ -66,7 +83,12 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
       y      = (this.cellHeight * row) - (this.cellHeight/2),
       player = this.players[playerId];
 
+  //save player position
+  this.players[playerId].cell = this.board[row][col];
+
+  // save original context - becuase we will be defining a clip
   this.ctx.save();
+
   this.ctx.beginPath();
   this.ctx.moveTo(x, y);
   this.ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -76,5 +98,12 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   this.ctx.closePath();
   this.ctx.stroke();
 
+  // restore original context
   this.ctx.restore();
- }
+}
+
+Gameboard.prototype.highlightCell = function () {
+  $(this.canvas).on('mousemove', function(event) {
+
+  });
+};
