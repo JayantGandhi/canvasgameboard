@@ -15,7 +15,8 @@
   </style>
 </head>
 
-<body onload="var gameboard = new Gameboard('gameboard', 10, 10); gameboard.drawBoard();">
+<body onload="var gameboard = new Gameboard('gameboard', 10, 10); gameboard.drawBoard(); gameboard.drawPlayer(9,9);">
+  <img id="userAvatar" src="/images/user_avatar.jpg" style="display:none;" alt="" />
   <h1>Demo Gameboard</h1>
   <canvas id="gameboard" width="300" height="300"></canvas>
 </body>
