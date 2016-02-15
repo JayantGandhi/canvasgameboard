@@ -4,13 +4,31 @@
 * Creates the Gameboard prototype
 */
 
-var gameboard;
+var gameboard, currentCell, hoveredCell;
 
-function Cell(row, col) {
+function Cell(row, col, x, y, gameboard) {
   this.row = row;
   this.col = col;
-  this.gameEvent;
+  this.gameElement;
+  this.x = x;
+  this.y = y;
+  this.gameboard = gameboard;
 }
+
+Cell.prototype.highlight = function () {
+  if (this.gameElement !== 'player') {
+    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  }
+};
+
+Cell.prototype.unHighlight = function () {
+  if (this.gameElement !== 'player') {
+    gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+    gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  }
+};
+
 
 /**
  * Defines the Gameboard object
@@ -48,7 +66,9 @@ function Gameboard(id, rows, cols, players, current_player) {
     this.board.push([i])
 
     for (var j = 1; j <= cols; j++) {
-      this.board[i].push(new Cell(i, j));
+      var x = (j - 1) * this.cellWidth,
+          y = (i - 1) * this.cellHeight;
+      this.board[i].push(new Cell(i, j, x, y, this));
     }
   }
 }
@@ -90,6 +110,7 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
   //save player position
   this.players[playerId].cell = this.board[row][col];
+  this.board[row][col].gameElement = "player";
 
   // save original context - becuase we will be defining a clip
   this.ctx.save();
@@ -110,8 +131,20 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 Gameboard.prototype.highlightCell = function () {
   $(this.canvas).on('mousemove', function(event) {
     var offset = $(gameboard.canvas).offset(),
-        mousePosition = {x: event.pageX - offset.left, y: (event.pageY - offset.top)};
+        mousePosition = {x: event.pageX - offset.left, y: (event.pageY - offset.top)},
+        row = Math.ceil(mousePosition.y/gameboard.cellWidth),
+        col = Math.ceil(mousePosition.x/gameboard.cellHeight),
+        cell = gameboard.board[row][col];
 
-    console.log(Math.floor(mousePosition.x/gameboard.cellWidth));
+    if (hoveredCell !== cell) {
+      if (typeof hoveredCell !== 'undefined'){
+        hoveredCell.unHighlight();
+      }
+
+      hoveredCell = cell;
+      hoveredCell.highlight();
+      $(event.target).trigger('hovered_cell_changed');
+    }
+
   });
 };
