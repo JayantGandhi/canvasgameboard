@@ -33,5 +33,5 @@ function drawBoard(rows=5, cols=5) {
  * places the player at the specified row/col
  */
 function placePlayer(row, col) {
-
+  
 }
