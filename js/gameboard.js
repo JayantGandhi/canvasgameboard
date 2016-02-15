@@ -3,6 +3,14 @@
 * Creates the Gameboard prototype
 */
 
+
+/**
+ * Defines the Gameboard object
+ * @param {[type]} id      [description]
+ * @param {[type]} rows    [description]
+ * @param {[type]} cols    [description]
+ * @param {[type]} players [description]
+ */
 function Gameboard(id, rows, cols, players) {
  var id   = typeof id !== 'undefined' ? id : 'gameboard',
      rows = typeof rows !== 'undefined' ? rows : 5,
@@ -38,8 +46,6 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
   //temporary until I figure out a better way to handle user's avatars
   var playerImage = document.getElementById('userAvatar');
-
-  console.log(playerImage);
 
   this.ctx.beginPath();
   this.ctx.moveTo(x, y);
