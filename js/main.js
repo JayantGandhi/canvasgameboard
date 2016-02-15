@@ -7,8 +7,8 @@ window.onload = function() {
 
     initBoard('gameboard', size, size);
   }
+  
   var gameboard = initBoard('gameboard', 8, 8);
-  return gameboard;
 }
 
 function initBoard(boardId, rows, cols) {
