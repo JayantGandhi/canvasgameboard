@@ -2,7 +2,11 @@
  * Draws the game board
  * defaults to a 5x5 grid if not specified
  */
-function drawBoard(rows=5, cols=5) {
+function drawBoard(rows, cols) {
+  var rows = typeof rows !== 'undefined' ? rows : 5,
+      cols = typeof cols !== 'undefined' ? cols : 5;
+
+
   var gameboard = document.getElementById('gameboard');
 
   if (gameboard.getContext) {
@@ -33,5 +37,5 @@ function drawBoard(rows=5, cols=5) {
  * places the player at the specified row/col
  */
 function placePlayer(row, col) {
-  
+
 }
