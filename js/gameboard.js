@@ -37,6 +37,7 @@ function Gameboard(id, rows, cols, players) {
  */
 Gameboard.prototype.drawBoard = function () {
   this.ctx.beginPath();
+  this.ctx.clearRect(0, 0, this.board.width, this.board.height);
 
   for (var i = 0; i <= 300; i+= this.cellHeight) { //horizontal lines
     this.ctx.moveTo(0, i);
@@ -65,6 +66,7 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
       y      = (this.cellHeight * row) - (this.cellHeight/2),
       player = this.players[playerId];
 
+  this.ctx.save();
   this.ctx.beginPath();
   this.ctx.moveTo(x, y);
   this.ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -73,4 +75,6 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
   this.ctx.closePath();
   this.ctx.stroke();
+
+  this.ctx.restore();
  }

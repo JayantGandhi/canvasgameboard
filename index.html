@@ -16,10 +16,20 @@
   </style>
 </head>
 
-<body onload="var gameboard = new Gameboard('gameboard', 10, 10); gameboard.drawBoard(); gameboard.drawPlayer(9,9, 'player2');">
+<body onload=" ">
   <img id="userAvatar" src="images/user_avatar.jpg" style="display:none;" alt="" />
   <h1>Demo Gameboard</h1>
   <canvas id="gameboard" width="300" height="300"></canvas>
+  <section>
+    <h2>Select Board Size</h2>
+    <select class="" name="board_size">
+      <option value="8x8">8x8</option>
+      <option value="10x10">10x10</option>
+      <option value="12x12">12x12</option>
+      <option value="14x14">14x14</option>
+    </select>
+    <button id="boardSizeSubmit" type="button" name="board_size_submit">Submit</button>
+  </section>
 </body>
 
 </html>
