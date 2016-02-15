@@ -1,4 +1,8 @@
-function drawBoard(rows, cols) {
+/**
+ * Draws the game board
+ * defaults to a 5x5 grid if not specified
+ */
+function drawBoard(rows=5, cols=5) {
   var gameboard = document.getElementById('gameboard');
 
   if (gameboard.getContext) {
@@ -23,4 +27,11 @@ function drawBoard(rows, cols) {
 
     ctx.stroke();
   }
+}
+
+/**
+ * places the player at the specified row/col
+ */
+function placePlayer(row, col) {
+
 }
