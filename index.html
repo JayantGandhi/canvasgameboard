@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <head>
+  <script type="text/javascript" src="js/gameboard.js"></script>
   <script type="text/javascript" src="js/main.js"></script>
   <style media="screen">
     body {
@@ -14,7 +15,7 @@
   </style>
 </head>
 
-<body onload="drawBoard(8,8);">
+<body onload="var gameboard = new Gameboard('gameboard', 10, 10); gameboard.drawBoard();">
   <h1>Demo Gameboard</h1>
   <canvas id="gameboard" width="300" height="300"></canvas>
 </body>

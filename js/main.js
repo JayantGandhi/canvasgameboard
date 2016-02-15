@@ -34,6 +34,14 @@ function drawBoard(rows, cols) {
 }
 
 /**
+ * draws player at specified coordinates
+ */
+function drawPlayer(x, y, radius, ctx) {
+  ctx.moveTo(x, y);
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+}
+
+/**
  * places the player at the specified row/col
  */
 function placePlayer(row, col) {
