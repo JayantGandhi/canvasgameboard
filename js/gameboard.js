@@ -4,6 +4,8 @@
 * Creates the Gameboard prototype
 */
 
+var gameboard;
+
 function Cell(row, col) {
   this.row = row;
   this.col = col;
@@ -31,6 +33,8 @@ function Gameboard(id, rows, cols, players, current_player) {
     }
   }
 
+  gameboard = this;
+
   this.canvas = document.getElementById(id);
   this.board = [];
   this.ctx = this.canvas.getContext('2d');
@@ -39,7 +43,8 @@ function Gameboard(id, rows, cols, players, current_player) {
   this.players = players;
   this.current_player = current_player;
 
-  for (var i = 0; i <= rows; i++) {
+  this.board.push([])
+  for (var i = 1; i <= rows; i++) {
     this.board.push([i])
 
     for (var j = 1; j <= cols; j++) {
@@ -56,14 +61,14 @@ Gameboard.prototype.drawBoard = function () {
   this.ctx.beginPath();
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-  for (var i = 0; i <= 300; i+= this.cellHeight) { //horizontal lines
+  for (var i = 0; i <= this.canvas.height; i+= this.cellHeight) { //horizontal lines
     this.ctx.moveTo(0, i);
-    this.ctx.lineTo(300, i);
+    this.ctx.lineTo(this.canvas.height, i);
   }
 
-  for (var i = 0; i <= 300; i+= this.cellWidth) { //vertical lines
+  for (var i = 0; i <= this.canvas.width; i+= this.cellWidth) { //vertical lines
     this.ctx.moveTo(i, 0);
-    this.ctx.lineTo(i, 300);
+    this.ctx.lineTo(i, this.canvas.width);
   }
   this.ctx.closePath();
   this.ctx.stroke();
@@ -104,6 +109,9 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
 Gameboard.prototype.highlightCell = function () {
   $(this.canvas).on('mousemove', function(event) {
+    var offset = $(gameboard.canvas).offset(),
+        mousePosition = {x: event.pageX - offset.left, y: (event.pageY - offset.top)};
 
+    console.log(Math.floor(mousePosition.x/gameboard.cellWidth));
   });
 };

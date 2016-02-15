@@ -18,7 +18,6 @@ function Player(name, avatar_path) {
   this.name = name;
   this.avatar = avatar;
   this.cell;
-  console.log(this);
 }
 
 // Player.prototype.play = function () {
