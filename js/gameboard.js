@@ -135,6 +135,7 @@ function Player(x, y, gameboard, name, avatar_path) {
   }
   this.name = name;
   this.avatar = avatar;
+  this.uncovered = true;
 };
 
 // Player inherits from cell
@@ -188,8 +189,8 @@ Gameboard.prototype.drawBoard = function () {
  */
 Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   var radius = (this.cellWidth / 2) - 1,
-      x      = (this.cellWidth * col) - (this.cellWidth/2),
-      y      = (this.cellHeight * row) - (this.cellHeight/2),
+      x      = (this.cellWidth * (col - 1)),
+      y      = (this.cellHeight * (row - 1)),
       player = this.players[playerId];
 
   //save player position
@@ -202,10 +203,12 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   this.ctx.save();
 
   this.ctx.beginPath();
-  this.ctx.moveTo(x, y);
-  this.ctx.arc(x, y, radius, 0, Math.PI * 2);
+  //clear the cell
+  this.ctx.clearRect(x, y, gameboard.cellWidth, gameboard.cellHeight);
+  this.ctx.moveTo(x + (this.cellWidth/2), y + (this.cellHeight/2));
+  this.ctx.arc(x + (this.cellWidth/2), y + (this.cellHeight/2), radius, 0, Math.PI * 2);
   this.ctx.clip();
-  this.ctx.drawImage(player.avatar, x - (this.cellWidth/2), y - (this.cellHeight/2), this.cellWidth, this.cellHeight);
+  this.ctx.drawImage(player.avatar, x, y, this.cellWidth, this.cellHeight);
 
   this.ctx.closePath();
   this.ctx.stroke();
