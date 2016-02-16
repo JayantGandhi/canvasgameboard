@@ -12,8 +12,7 @@ window.onload = function() {
   }
 
   var gameboard = initBoard('gameboard', 8, 8);
-  initInfo('gameinfo');
-  gameboard.current_player = gameboard.players['player2'];
+  initInfo('gameinfo', 'playerinfo');
 }
 
 function initBoard(boardId, rows, cols) {
@@ -27,6 +26,7 @@ function initBoard(boardId, rows, cols) {
   });
 
   gameboard = new Gameboard(boardId, rows, cols);
+  gameboard.current_player = 'player2';
   gameboard.drawBoard();
 
   // temp code for demo
@@ -39,12 +39,21 @@ function initBoard(boardId, rows, cols) {
   return gameboard;
 }
 
-function initInfo(infoId) {
+function initInfo(gameinfoId, playerinfoId) {
   var gameinfo,
+      playerinfo,
       canvasSize = window.innerHeight * .3;
 
-  $("#" + infoId).attr({
+  $("#" + gameinfoId).attr({
     'width'  : canvasSize,
     'height' : canvasSize
   });
+
+  $("#" + playerinfoId).attr({
+    'width'  : canvasSize,
+    'height' : canvasSize
+  });
+
+  gameinfo = new GameInfo(gameinfoId);
+  playerinfo = new PlayerInfo(playerinfoId, 'player1')
 }

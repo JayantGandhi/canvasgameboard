@@ -103,10 +103,6 @@ function Gameboard(id, rows, cols, players, current_player) {
   }
 }
 
-function GameInfo(gameinfoId) {
-  this.canvas = document.getElementById(gameinfoId);
-}
-
 /**
  * Defines a player object
  * @param {[type]} name        [description]
@@ -142,6 +138,25 @@ Player.prototype.unHighlight = function () {
 
 // repoint constructor
 Player.prototype.constructor = Player;
+
+/**
+ * Information about Cells
+ * @param {[type]} gameinfoId [description]
+ */
+function GameInfo(gameinfoId) {
+  this.canvas = document.getElementById(gameinfoId);
+  this.ctx = this.canvas.getContext('2d');
+  console.log(this);
+}
+
+function PlayerInfo(playerinfoId, player_name) {
+  console.log(playerinfoId);
+  this.canvas = document.getElementById(playerinfoId);
+  this.ctx = this.canvas.getContext('2d');
+  console.log(gameboard);
+  this.player = gameboard.players[player_name];
+  console.log(this);
+}
 
 /**
  * Draws the gameboard
