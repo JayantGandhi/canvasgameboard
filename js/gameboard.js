@@ -18,12 +18,12 @@ var gameboard, currentCell, hoveredCell;
 function Cell(x, y, gameboard) {
   this.x = x;
   this.y = y;
+  // console.log(this.constructor.name);
   try{
     this.cellWidth = gameboard.cellWidth;
-    this.CellHeight = gameboard.cellHeight;
+    this.cellHeight = gameboard.cellHeight;
   } catch (e) {
     console.log(gameboard);
-    console.log(this.constructor.name);
   }
 
   this.uncovered = false;
@@ -31,11 +31,13 @@ function Cell(x, y, gameboard) {
 
 Cell.prototype.fillCell = function() {
   if (!this.uncovered) {
-    var font = (this.cellHeight * .9).toString() + "px serif";
+    var font = (Math.floor(this.cellHeight * .75)).toString() + "px serif";
+    gameboard.ctx.save();
     gameboard.ctx.font = font;
     gameboard.ctx.textBaseline = 'middle';
     gameboard.ctx.textAlign = 'center';
     gameboard.ctx.fillText('?', this.x + (this.cellWidth/2), this.y + (this.CellHeight/2));
+    gameboard.ctx.restore();
   }
 }
 
@@ -44,13 +46,8 @@ Cell.prototype.fillCell = function() {
  * @return {[type]} [description]
  */
 Cell.prototype.highlight = function () {
-  if (this.constructor.name !== 'Player') {
-    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
-  } else {
-    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
-    gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
-  }
+  gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
 };
 
 /**
@@ -58,10 +55,8 @@ Cell.prototype.highlight = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.unHighlight = function () {
-  if (this.constructor.name !== 'Player') {
-    gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
-    gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
-  }
+  gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
 };
 
 
@@ -112,8 +107,6 @@ function GameInfo(gameinfoId) {
   this.canvas = document.getElementById(gameinfoId);
 }
 
-Player.prototype = new Cell();
-
 /**
  * Defines a player object
  * @param {[type]} name        [description]
@@ -122,6 +115,8 @@ Player.prototype = new Cell();
 function Player(x, y, gameboard, name, avatar_path) {
   var avatar;
 
+  Cell.call(this, x, y, gameboard);
+
   if (typeof avatar_path !== 'undefined') {
     avatar = document.createElement('img');
     avatar.src = avatar_path
@@ -129,16 +124,23 @@ function Player(x, y, gameboard, name, avatar_path) {
     // default avatar
     avatar = document.getElementById('userAvatar');
   }
-
   this.name = name;
   this.avatar = avatar;
-  this.cell;
 };
 
+// Player inherits from cell
+Player.prototype = Object.create(Cell.prototype);
 
-Player.prototype.getInfo = function () {
-
+Player.prototype.highlight = function () {
+  return false;
 };
+
+Player.prototype.unHighlight = function () {
+  return false;
+};
+
+// repoint constructor
+Player.prototype.constructor = Player;
 
 /**
  * Draws the gameboard
@@ -182,7 +184,9 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
       player = this.players[playerId];
 
   //save player position
-  this.board[row][col] = this.players[playerId];
+  // this.players[playerId].x = ;
+  // this.players[playerId].y = ;
+  this.board[row - 1][col - 1] = this.players[playerId];
 
   // save original context - becuase we will be defining a clip
   this.ctx.save();
