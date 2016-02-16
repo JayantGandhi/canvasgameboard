@@ -18,7 +18,13 @@ var gameboard, currentCell, hoveredCell;
 function Cell(x, y, gameboard) {
   this.x = x;
   this.y = y;
-  // console.log(this.constructor.name);
+
+  if (this.constructor.name === 'Player') {
+    console.log(gameboard);
+    console.log(gameboard.cellWidth);
+    console.log(gameboard['cellWidth']);
+  }
+
   try{
     this.cellWidth = gameboard.cellWidth;
     this.cellHeight = gameboard.cellHeight;
@@ -31,13 +37,15 @@ function Cell(x, y, gameboard) {
 
 Cell.prototype.fillCell = function() {
   if (!this.uncovered) {
-    var font = (Math.floor(this.cellHeight * .75)).toString() + "px serif";
-    gameboard.ctx.save();
-    gameboard.ctx.font = font;
-    gameboard.ctx.textBaseline = 'middle';
-    gameboard.ctx.textAlign = 'center';
-    gameboard.ctx.fillText('?', this.x + (this.cellWidth/2), this.y + (this.CellHeight/2));
-    gameboard.ctx.restore();
+    // var font = (Math.floor(this.cellHeight * .75)).toString() + "px serif";
+    // gameboard.ctx.save();
+    // gameboard.ctx.font = font;
+    // gameboard.ctx.textBaseline = 'middle';
+    // gameboard.ctx.textAlign = 'center';
+    // gameboard.ctx.fillText('?', this.x + (this.cellWidth/2), this.y + (this.CellHeight/2));
+    // gameboard.ctx.restore();
+    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   }
 }
 
@@ -46,7 +54,7 @@ Cell.prototype.fillCell = function() {
  * @return {[type]} [description]
  */
 Cell.prototype.highlight = function () {
-  gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  gameboard.ctx.fillStyle = 'rgba(0,0,0,0.5)';
   gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
 };
 
@@ -57,6 +65,7 @@ Cell.prototype.highlight = function () {
 Cell.prototype.unHighlight = function () {
   gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  this.fillCell();
 };
 
 
@@ -184,9 +193,10 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
       player = this.players[playerId];
 
   //save player position
-  // this.players[playerId].x = ;
-  // this.players[playerId].y = ;
+  this.players[playerId].x = x;
+  this.players[playerId].y = y;
   this.board[row - 1][col - 1] = this.players[playerId];
+  console.log(this.players[playerId]);
 
   // save original context - becuase we will be defining a clip
   this.ctx.save();
