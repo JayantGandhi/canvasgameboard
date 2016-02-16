@@ -9,22 +9,36 @@ var gameboard, currentCell, hoveredCell;
 /**
  * Object for each game cell
  * May contain the player or some kind of game related element
- * @param {[type]} row       [description]
- * @param {[type]} col       [description]
+ * @param {[type]} row       row of cell (0 indexed)
+ * @param {[type]} col       column of cell (0 indexed)
  * @param {[type]} x         x coord of top left corner
  * @param {[type]} y         y coord of top left corner
  * @param {[type]} gameboard [description]
  */
-function Cell(x, y, gameboard) {
-  this.x = x;
-  this.y = y;
-
+function Cell(row, col, gameboard) {
   this.cellWidth = gameboard.cellWidth;
   this.cellHeight = gameboard.cellHeight;
+
+  this.setRow(row);
+  this.setCol(col);
 
   this.uncovered = false;
 }
 
+Cell.prototype.setRow = function(row) {
+  this.row = row;
+  this.y   = this.cellHeight * row;
+}
+
+Cell.prototype.setCol = function(col) {
+  this.col = col;
+  this.x   = this.cellWidth * col;
+}
+
+/**
+ * Draws the cell
+ * @return {[type]} [description]
+ */
 Cell.prototype.draw = function() {
   if (!this.uncovered) {
     // var font = (Math.floor(this.cellHeight * .75)).toString() + "px serif";
@@ -80,7 +94,7 @@ function Gameboard(id, rows, cols, players, current_player) {
   this.cellWidth = this.canvas.width /cols;
 
   if (typeof players === 'undefined') {
-    var temp    = [new Player(0, 0, this, 'player1'), new Player(0, 0, this, 'player2')],
+    var temp    = [new Player(null, null, this, 'player1'), new Player(null, null, this, 'player2')],
         players = [];
 
     for (var i = 0; i < temp.length; i++) {
@@ -95,10 +109,7 @@ function Gameboard(id, rows, cols, players, current_player) {
     this.board.push([i])
 
     for (var j = 0; j < cols; j++) {
-      var x = (j) * this.cellWidth,
-          y = (i) * this.cellHeight;
-
-      this.board[i][j] = (new Cell(x, y, this));
+      this.board[i][j] = (new Cell(i, j, this));
     }
   }
 }
@@ -229,8 +240,8 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
       player = this.players[playerId];
 
   //save player position
-  player.x = x;
-  player.y = y;
+  player.setRow(row);
+  player.setCol(row);
   this.board[row - 1][col - 1] = player;
 
   player.draw(x, y);
