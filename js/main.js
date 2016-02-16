@@ -47,7 +47,7 @@ function initBoard(boardId, rows, cols) {
 function initInfo(gameinfoId, playerinfoId) {
   var gameinfo,
       playerinfo,
-      canvasSize = window.innerHeight * .3;
+      canvasSize = Math.floor(window.innerHeight * .3);
 
   $("#" + gameinfoId).attr({
     'width'  : canvasSize,
