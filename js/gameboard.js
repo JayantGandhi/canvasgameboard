@@ -157,11 +157,12 @@ Player.prototype.unHighlight = function () {
 
 /**
  * Draw the player at the given coordinates
- * @param  {[type]} x x coord of top left corner
- * @param  {[type]} y y coord of top left corner
+ * @param  {[type]} x x coord of top left corner (defaults to stored value)
+ * @param  {[type]} y y coord of top left corner (defaults to stored value)
  * @return {[type]}   [description]
  */
-Player.prototype.draw = function () {
+Player.prototype.draw = function (x, y) {
+  // console.log(this);
   var radius = (this.cellWidth / 2) - 1;
   // save original context - becuase we will be defining a clip
   gameboard.ctx.save();
@@ -243,14 +244,14 @@ Gameboard.prototype.drawBoard = function () {
  * @return {[type]}          [description]
  */
 Gameboard.prototype.drawPlayer = function(row, col, playerId) {
-  var x      = (this.cellWidth * (col - 1)),
-      y      = (this.cellHeight * (row - 1)),
+  var x      = (this.cellWidth * (col)),
+      y      = (this.cellHeight * (row)),
       player = this.players[playerId];
 
   //save player position
   player.setRow(row);
   player.setCol(row);
-  this.board[row - 1][col - 1] = player;
+  this.board[row][col] = player;
 
   player.draw();
 }
