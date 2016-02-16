@@ -8,14 +8,12 @@ var gameboard, currentCell, hoveredCell;
 
 /**
  * Object for each game cell
- * May contain the player or some kind of game related element
  * @param {[type]} row       row of cell (0 indexed)
  * @param {[type]} col       column of cell (0 indexed)
  * @param {[type]} x         x coord of top left corner
  * @param {[type]} y         y coord of top left corner
- * @param {[type]} gameboard [description]
  */
-function Cell(row, col, gameboard) {
+function Cell(row, col) {
   this.cellWidth = gameboard.cellWidth;
   this.cellHeight = gameboard.cellHeight;
 
@@ -25,11 +23,21 @@ function Cell(row, col, gameboard) {
   this.uncovered = false;
 }
 
+/**
+ * sets the row attribute and calculates y
+ * @param  {[type]} row [description]
+ * @return {[type]}     [description]
+ */
 Cell.prototype.setRow = function(row) {
   this.row = row;
   this.y   = this.cellHeight * row;
 }
 
+/**
+ * sets the col attribute and calculates x
+ * @param  {[type]} col [description]
+ * @return {[type]}     [description]
+ */
 Cell.prototype.setCol = function(col) {
   this.col = col;
   this.x   = this.cellWidth * col;
@@ -153,18 +161,18 @@ Player.prototype.unHighlight = function () {
  * @param  {[type]} y y coord of top left corner
  * @return {[type]}   [description]
  */
-Player.prototype.draw = function (x, y) {
+Player.prototype.draw = function () {
   var radius = (this.cellWidth / 2) - 1;
   // save original context - becuase we will be defining a clip
   gameboard.ctx.save();
 
   gameboard.ctx.beginPath();
   //clear the cell
-  gameboard.ctx.clearRect(x, y, this.cellWidth, this.cellHeight);
-  gameboard.ctx.moveTo(x + (this.cellWidth/2), y + (this.cellHeight/2));
-  gameboard.ctx.arc(x + (this.cellWidth/2), y + (this.cellHeight/2), radius, 0, Math.PI * 2);
+  gameboard.ctx.clearRect(this.x, this.y, this.cellWidth, this.cellHeight);
+  gameboard.ctx.moveTo(this.x + (this.cellWidth/2), this.y + (this.cellHeight/2));
+  gameboard.ctx.arc(this.x + (this.cellWidth/2), this.y + (this.cellHeight/2), radius, 0, Math.PI * 2);
   gameboard.ctx.clip();
-  gameboard.ctx.drawImage(this.avatar, x, y, this.cellWidth, this.cellHeight);
+  gameboard.ctx.drawImage(this.avatar, this.x, this.y, this.cellWidth, this.cellHeight);
 
   gameboard.ctx.closePath();
   gameboard.ctx.stroke();
@@ -172,7 +180,7 @@ Player.prototype.draw = function (x, y) {
   // restore original context
   gameboard.ctx.restore();};
 
-Player.prototype.move = function (x, y) {
+Player.prototype.move = function (row, col) {
   // body...
 };
 
@@ -244,7 +252,7 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   player.setCol(row);
   this.board[row - 1][col - 1] = player;
 
-  player.draw(x, y);
+  player.draw();
 }
 
 Gameboard.prototype.setListeners = function () {

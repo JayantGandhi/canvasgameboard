@@ -35,8 +35,8 @@ function initBoard(boardId, rows, cols) {
   gameboard.drawBoard();
 
   // temp code for demo
-  gameboard.drawPlayer(rows - 1, cols - 1, 'player1')
-  gameboard.drawPlayer(2,2, 'player2');
+  gameboard.drawPlayer(rows - 2, cols - 2, 'player1')
+  gameboard.drawPlayer(1,1, 'player2');
 
   //set listeners on gameboard
   gameboard.unsetListeners();
