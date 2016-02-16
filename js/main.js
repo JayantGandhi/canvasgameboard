@@ -5,8 +5,8 @@ window.onload = function() {
       select = document.getElementsByName('board_size');
 
   submit.onclick = function() {
-    var rows = select[0].value.substr(0, select[0].value.indexOf('x')),
-        cols = select[0].value.substr(select[0].value.indexOf('x'), select[0].value.length);
+    var rows = parseInt(select[0].value.substr(0, select[0].value.indexOf('x'))),
+        cols = parseInt(select[0].value.substr(select[0].value.indexOf('x') + 1, select[0].value.length));
 
     initBoard('gameboard', rows, cols);
   }
@@ -14,7 +14,6 @@ window.onload = function() {
   var gameboard = initBoard('gameboard', 8, 8);
   initInfo('gameinfo');
   gameboard.current_player = gameboard.players['player2'];
-  gameboard.setListeners();
 }
 
 function initBoard(boardId, rows, cols) {
@@ -30,6 +29,8 @@ function initBoard(boardId, rows, cols) {
   gameboard = new Gameboard(boardId, rows, cols);
   gameboard.drawBoard();
   gameboard.drawPlayer(2,2, 'player2');
+  gameboard.unsetListeners();
+  gameboard.setListeners();
   return gameboard;
 }
 

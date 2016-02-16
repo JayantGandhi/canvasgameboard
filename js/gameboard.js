@@ -15,13 +15,28 @@ var gameboard, currentCell, hoveredCell;
  * @param {[type]} y         y coord of top left corner
  * @param {[type]} gameboard [description]
  */
-function Cell(row, col, x, y, gameboard) {
-  this.row = row;
-  this.col = col;
+function Cell(x, y, gameboard) {
   this.x = x;
   this.y = y;
-  this.gameboard = gameboard;
+  try{
+    this.cellWidth = gameboard.cellWidth;
+    this.CellHeight = gameboard.cellHeight;
+  } catch (e) {
+    console.log(gameboard);
+    console.log(this.constructor.name);
+  }
+
   this.uncovered = false;
+}
+
+Cell.prototype.fillCell = function() {
+  if (!this.uncovered) {
+    var font = (this.cellHeight * .9).toString() + "px serif";
+    gameboard.ctx.font = font;
+    gameboard.ctx.textBaseline = 'middle';
+    gameboard.ctx.textAlign = 'center';
+    gameboard.ctx.fillText('?', this.x + (this.cellWidth/2), this.y + (this.CellHeight/2));
+  }
 }
 
 /**
@@ -63,7 +78,7 @@ function Gameboard(id, rows, cols, players, current_player) {
       cols = typeof cols !== 'undefined' ? cols : 5;
 
   if (typeof players === 'undefined') {
-    var temp    = [new Player('player1'), new Player('player2')],
+    var temp    = [new Player(0, 0, this, 'player1'), new Player(0, 0, this, 'player2')],
         players = [];
 
     for (var i = 0; i < temp.length; i++) {
@@ -75,20 +90,20 @@ function Gameboard(id, rows, cols, players, current_player) {
 
   this.canvas = document.getElementById(id);
   this.board = [];
+  this.players = players;
   this.ctx = this.canvas.getContext('2d');
   this.cellHeight = this.canvas.height / rows;
   this.cellWidth = this.canvas.width /cols;
-  this.players = players;
   this.current_player = current_player;
 
-  this.board.push([])
-  for (var i = 1; i <= rows; i++) {
+  for (var i = 0; i < rows; i++) {
     this.board.push([i])
 
-    for (var j = 1; j <= cols; j++) {
-      var x = (j - 1) * this.cellWidth,
-          y = (i - 1) * this.cellHeight;
-      this.board[i].push(new Cell(i, j, x, y, this));
+    for (var j = 0; j < cols; j++) {
+      var x = (j) * this.cellWidth,
+          y = (i) * this.cellHeight;
+
+      this.board[i][j] = (new Cell(x, y, this));
     }
   }
 }
@@ -97,12 +112,14 @@ function GameInfo(gameinfoId) {
   this.canvas = document.getElementById(gameinfoId);
 }
 
+Player.prototype = new Cell();
+
 /**
  * Defines a player object
  * @param {[type]} name        [description]
  * @param {[type]} avatar_path [description]
  */
-function Player(name, avatar_path) {
+function Player(x, y, gameboard, name, avatar_path) {
   var avatar;
 
   if (typeof avatar_path !== 'undefined') {
@@ -118,7 +135,6 @@ function Player(name, avatar_path) {
   this.cell;
 };
 
-Player.prototype = new Cell();
 
 Player.prototype.getInfo = function () {
 
@@ -131,7 +147,7 @@ Player.prototype.getInfo = function () {
 Gameboard.prototype.drawBoard = function () {
   this.ctx.beginPath();
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+  //draw the grid lines
   for (var i = 0; i <= this.canvas.height; i+= this.cellHeight) { //horizontal lines
     this.ctx.moveTo(0, i);
     this.ctx.lineTo(this.canvas.height, i);
@@ -143,6 +159,12 @@ Gameboard.prototype.drawBoard = function () {
   }
   this.ctx.closePath();
   this.ctx.stroke();
+
+  for (var i = 0; i < this.board.length - 1; i++) {
+    for (var j = 0; j < this.board[i].length - 1; j++) {
+      this.board[i][j].fillCell();
+    }
+  }
 
 };
 
@@ -182,8 +204,8 @@ Gameboard.prototype.setListeners = function () {
   $(this.canvas).on('mousemove', function(event) {
     var offset = $(gameboard.canvas).offset(),
         mousePosition = {x: event.pageX - offset.left, y: (event.pageY - offset.top)},
-        row = Math.ceil(mousePosition.y/gameboard.cellWidth),
-        col = Math.ceil(mousePosition.x/gameboard.cellHeight),
+        row = Math.floor(mousePosition.y/gameboard.cellWidth),
+        col = Math.floor(mousePosition.x/gameboard.cellHeight),
         cell = gameboard.board[row][col];
 
     if (hoveredCell !== cell) {
@@ -202,4 +224,8 @@ Gameboard.prototype.setListeners = function () {
     }
 
   });
+};
+
+Gameboard.prototype.unsetListeners = function () {
+  $(this.canvas).off('mousemove');
 };
