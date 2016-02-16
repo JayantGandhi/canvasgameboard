@@ -160,8 +160,8 @@ Gameboard.prototype.drawBoard = function () {
   this.ctx.closePath();
   this.ctx.stroke();
 
-  for (var i = 0; i < this.board.length - 1; i++) {
-    for (var j = 0; j < this.board[i].length - 1; j++) {
+  for (var i = 0; i < this.board.length; i++) {
+    for (var j = 0; j < this.board[i].length; j++) {
       this.board[i][j].fillCell();
     }
   }
