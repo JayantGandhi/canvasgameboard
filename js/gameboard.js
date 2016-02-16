@@ -19,18 +19,8 @@ function Cell(x, y, gameboard) {
   this.x = x;
   this.y = y;
 
-  if (this.constructor.name === 'Player') {
-    console.log(gameboard);
-    console.log(gameboard.cellWidth);
-    console.log(gameboard['cellWidth']);
-  }
-
-  try{
-    this.cellWidth = gameboard.cellWidth;
-    this.cellHeight = gameboard.cellHeight;
-  } catch (e) {
-    console.log(gameboard);
-  }
+  this.cellWidth = gameboard.cellWidth;
+  this.cellHeight = gameboard.cellHeight;
 
   this.uncovered = false;
 }
@@ -81,6 +71,14 @@ function Gameboard(id, rows, cols, players, current_player) {
       rows = typeof rows !== 'undefined' ? rows : 5,
       cols = typeof cols !== 'undefined' ? cols : 5;
 
+  gameboard = this;
+
+  this.canvas = document.getElementById(id);
+  this.board = [];
+  this.ctx = this.canvas.getContext('2d');
+  this.cellHeight = this.canvas.height / rows;
+  this.cellWidth = this.canvas.width /cols;
+
   if (typeof players === 'undefined') {
     var temp    = [new Player(0, 0, this, 'player1'), new Player(0, 0, this, 'player2')],
         players = [];
@@ -90,14 +88,7 @@ function Gameboard(id, rows, cols, players, current_player) {
     }
   }
 
-  gameboard = this;
-
-  this.canvas = document.getElementById(id);
-  this.board = [];
   this.players = players;
-  this.ctx = this.canvas.getContext('2d');
-  this.cellHeight = this.canvas.height / rows;
-  this.cellWidth = this.canvas.width /cols;
   this.current_player = current_player;
 
   for (var i = 0; i < rows; i++) {
@@ -197,7 +188,6 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   this.players[playerId].x = x;
   this.players[playerId].y = y;
   this.board[row - 1][col - 1] = this.players[playerId];
-  console.log(this.players[playerId]);
 
   // save original context - becuase we will be defining a clip
   this.ctx.save();

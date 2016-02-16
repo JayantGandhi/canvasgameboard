@@ -28,7 +28,12 @@ function initBoard(boardId, rows, cols) {
 
   gameboard = new Gameboard(boardId, rows, cols);
   gameboard.drawBoard();
+
+  // temp code for demo
+  gameboard.drawPlayer(rows - 1, cols - 1, 'player1')
   gameboard.drawPlayer(2,2, 'player2');
+
+  //set listeners on gameboard
   gameboard.unsetListeners();
   gameboard.setListeners();
   return gameboard;
