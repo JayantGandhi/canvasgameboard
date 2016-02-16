@@ -6,6 +6,15 @@
 
 var gameboard, currentCell, hoveredCell;
 
+/**
+ * Object for each game cell
+ * May contain the player or some kind of game related element
+ * @param {[type]} row       [description]
+ * @param {[type]} col       [description]
+ * @param {[type]} x         x coord of top left corner
+ * @param {[type]} y         y coord of top left corner
+ * @param {[type]} gameboard [description]
+ */
 function Cell(row, col, x, y, gameboard) {
   this.row = row;
   this.col = col;
@@ -15,6 +24,10 @@ function Cell(row, col, x, y, gameboard) {
   this.gameboard = gameboard;
 }
 
+/**
+ * Highlights the given cell
+ * @return {[type]} [description]
+ */
 Cell.prototype.highlight = function () {
   if (this.gameElement !== 'player') {
     gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
@@ -22,6 +35,10 @@ Cell.prototype.highlight = function () {
   }
 };
 
+/**
+ * unhighlights the given cell
+ * @return {[type]} [description]
+ */
 Cell.prototype.unHighlight = function () {
   if (this.gameElement !== 'player') {
     gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
@@ -138,7 +155,9 @@ Gameboard.prototype.highlightCell = function () {
 
     if (hoveredCell !== cell) {
       if (typeof hoveredCell !== 'undefined'){
-        hoveredCell.unHighlight();
+        try {
+          hoveredCell.unHighlight();
+        } catch(e) {};
       }
 
       hoveredCell = cell;
