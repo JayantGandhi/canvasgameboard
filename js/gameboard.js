@@ -209,11 +209,18 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
 Gameboard.prototype.setListeners = function () {
   $(this.canvas).on('mousemove', function(event) {
-    var offset = $(gameboard.canvas).offset(),
+    var $canvas = $(event.target),
+        offset = $canvas.offset(),
         mousePosition = {x: event.pageX - offset.left, y: (event.pageY - offset.top)},
         row = Math.floor(mousePosition.y/gameboard.cellWidth),
         col = Math.floor(mousePosition.x/gameboard.cellHeight),
         cell = gameboard.board[row][col];
+
+    if (cell.constructor.name === 'Player') {
+      $canvas.attr('style','cursor:pointer;');
+    } else {
+      $canvas.attr('style','cursor:help;');
+    }
 
     if (hoveredCell !== cell) {
       if (typeof hoveredCell !== 'undefined'){
@@ -227,7 +234,7 @@ Gameboard.prototype.setListeners = function () {
         hoveredCell.highlight();
       } catch(e) {};
 
-      $(event.target).trigger('hovered_cell_changed');
+      $canvas.trigger('hovered_cell_changed');
     }
 
   });
