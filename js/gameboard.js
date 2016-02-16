@@ -161,6 +161,10 @@ Player.prototype.draw = function (x, y) {
   // restore original context
   gameboard.ctx.restore();};
 
+Player.prototype.move = function (x, y) {
+  // body...
+};
+
 // repoint constructor
 Player.prototype.constructor = Player;
 
