@@ -18,10 +18,10 @@ var gameboard, currentCell, hoveredCell;
 function Cell(row, col, x, y, gameboard) {
   this.row = row;
   this.col = col;
-  this.gameElement;
   this.x = x;
   this.y = y;
   this.gameboard = gameboard;
+  this.uncovered = false;
 }
 
 /**
@@ -29,7 +29,10 @@ function Cell(row, col, x, y, gameboard) {
  * @return {[type]} [description]
  */
 Cell.prototype.highlight = function () {
-  if (this.gameElement !== 'player') {
+  if (this.constructor.name !== 'Player') {
+    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  } else {
     gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
     gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   }
@@ -40,7 +43,7 @@ Cell.prototype.highlight = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.unHighlight = function () {
-  if (this.gameElement !== 'player') {
+  if (this.constructor.name !== 'Player') {
     gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
     gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   }
@@ -90,6 +93,37 @@ function Gameboard(id, rows, cols, players, current_player) {
   }
 }
 
+function GameInfo(gameinfoId) {
+  this.canvas = document.getElementById(gameinfoId);
+}
+
+/**
+ * Defines a player object
+ * @param {[type]} name        [description]
+ * @param {[type]} avatar_path [description]
+ */
+function Player(name, avatar_path) {
+  var avatar;
+
+  if (typeof avatar_path !== 'undefined') {
+    avatar = document.createElement('img');
+    avatar.src = avatar_path
+  } else {
+    // default avatar
+    avatar = document.getElementById('userAvatar');
+  }
+
+  this.name = name;
+  this.avatar = avatar;
+  this.cell;
+};
+
+Player.prototype = new Cell();
+
+Player.prototype.getInfo = function () {
+
+};
+
 /**
  * Draws the gameboard
  * @return {[type]} [description]
@@ -126,8 +160,7 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
       player = this.players[playerId];
 
   //save player position
-  this.players[playerId].cell = this.board[row][col];
-  this.board[row][col].gameElement = "player";
+  this.board[row][col] = this.players[playerId];
 
   // save original context - becuase we will be defining a clip
   this.ctx.save();
@@ -145,7 +178,7 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   this.ctx.restore();
 }
 
-Gameboard.prototype.highlightCell = function () {
+Gameboard.prototype.setListeners = function () {
   $(this.canvas).on('mousemove', function(event) {
     var offset = $(gameboard.canvas).offset(),
         mousePosition = {x: event.pageX - offset.left, y: (event.pageY - offset.top)},
@@ -161,7 +194,10 @@ Gameboard.prototype.highlightCell = function () {
       }
 
       hoveredCell = cell;
-      hoveredCell.highlight();
+      try {
+        hoveredCell.highlight();
+      } catch(e) {};
+
       $(event.target).trigger('hovered_cell_changed');
     }
 
