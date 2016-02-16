@@ -162,18 +162,31 @@ Player.prototype.unHighlight = function () {
  * @return {[type]}   [description]
  */
 Player.prototype.draw = function (x, y) {
-  // console.log(this);
+  var x_coord, y_coord;
+
+  if (typeof x !== 'undefined') {
+    x_coord = x;
+  } else {
+    x_coord = this.x;
+  }
+
+  if (typeof y !== 'undefined') {
+    y_coord = y;
+  } else {
+    y_coord = this.y;
+  }
+
   var radius = (this.cellWidth / 2) - 1;
   // save original context - becuase we will be defining a clip
   gameboard.ctx.save();
 
   gameboard.ctx.beginPath();
   //clear the cell
-  gameboard.ctx.clearRect(this.x, this.y, this.cellWidth, this.cellHeight);
-  gameboard.ctx.moveTo(this.x + (this.cellWidth/2), this.y + (this.cellHeight/2));
-  gameboard.ctx.arc(this.x + (this.cellWidth/2), this.y + (this.cellHeight/2), radius, 0, Math.PI * 2);
+  gameboard.ctx.clearRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
+  gameboard.ctx.moveTo(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2));
+  gameboard.ctx.arc(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2), radius, 0, Math.PI * 2);
   gameboard.ctx.clip();
-  gameboard.ctx.drawImage(this.avatar, this.x, this.y, this.cellWidth, this.cellHeight);
+  gameboard.ctx.drawImage(this.avatar, x_coord, y_coord, this.cellWidth, this.cellHeight);
 
   gameboard.ctx.closePath();
   gameboard.ctx.stroke();
