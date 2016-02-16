@@ -25,7 +25,7 @@ function Cell(x, y, gameboard) {
   this.uncovered = false;
 }
 
-Cell.prototype.fillCell = function() {
+Cell.prototype.draw = function() {
   if (!this.uncovered) {
     // var font = (Math.floor(this.cellHeight * .75)).toString() + "px serif";
     // gameboard.ctx.save();
@@ -55,7 +55,7 @@ Cell.prototype.highlight = function () {
 Cell.prototype.unHighlight = function () {
   gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
-  this.fillCell();
+  this.draw();
 };
 
 
@@ -136,6 +136,12 @@ Player.prototype.unHighlight = function () {
   return false;
 };
 
+/**
+ * Draw the player at the given coordinates
+ * @param  {[type]} x x coord of top left corner
+ * @param  {[type]} y y coord of top left corner
+ * @return {[type]}   [description]
+ */
 Player.prototype.draw = function (x, y) {
   var radius = (this.cellWidth / 2) - 1;
   // save original context - becuase we will be defining a clip
@@ -167,6 +173,11 @@ function GameInfo(gameinfoId) {
   this.ctx = this.canvas.getContext('2d');
 }
 
+/**
+ * Stores the player's relevant information
+ * @param {[type]} playerinfoId [description]
+ * @param {[type]} player_name  [description]
+ */
 function PlayerInfo(playerinfoId, player_name) {
   this.canvas = document.getElementById(playerinfoId);
   this.ctx = this.canvas.getContext('2d');
@@ -195,7 +206,7 @@ Gameboard.prototype.drawBoard = function () {
 
   for (var i = 0; i < this.board.length; i++) {
     for (var j = 0; j < this.board[i].length; j++) {
-      this.board[i][j].fillCell();
+      this.board[i][j].draw();
     }
   }
 

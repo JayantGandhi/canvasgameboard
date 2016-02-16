@@ -9,7 +9,9 @@
       text-align: center;
     }
 
-    canvas#gameinfo {
+    canvas#gameinfo,
+    canvas#gameboardMask,
+    canvas#playerinfo {
       position: absolute;
     }
 
@@ -27,6 +29,7 @@
   <img id="userAvatar" src="images/user_avatar.jpg" style="display:none;" alt="" />
   <h1>Demo Gameboard</h1>
   <canvas id="gameboard" width="300" height="300"></canvas>
+  <canvas id="gameboardMask" width="300" height="300"></canvas>
   <canvas id="gameinfo" width="300" height="300"></canvas>
   <canvas id="playerinfo" width="300" height="300"></canvas>
   <section>

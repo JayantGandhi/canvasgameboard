@@ -17,12 +17,17 @@ window.onload = function() {
 
 function initBoard(boardId, rows, cols) {
   var gameboard,
-      canvasSize = window.innerHeight * .8;
+      canvasSize = Math.floor(window.innerHeight * .8);
 
   //set the size of the canvas based on the window
   $("#" + boardId).attr({
     'width'  : canvasSize,
     'height' : canvasSize
+  });
+  $("#" + boardId + "Mask").attr({
+    'width'  : canvasSize,
+    'height' : canvasSize,
+    'style'  : 'margin-left:' + (0 - canvasSize) + 'px'
   });
 
   gameboard = new Gameboard(boardId, rows, cols);
