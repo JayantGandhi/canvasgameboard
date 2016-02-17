@@ -344,6 +344,8 @@ PlayerActions.prototype.movePlayer = function (direction) {
   });
 
   promise.then(function(result){
+    gameboard.unsetListeners();
+    gameboard.setListeners();
     player_act.action_occuring = false;
   });
 };
