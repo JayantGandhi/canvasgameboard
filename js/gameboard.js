@@ -236,8 +236,11 @@ Player.prototype.move = function (row, col) {
         'ctx'    : gameboard.animationLayer.getContext('2d')
       };
 
-  if (target_x < 0 || target_y < 0) {
-    return false;
+  console.log(target_x);
+  console.log(gameboard.canvas.width);
+
+  if (target_x < 0 || target_y < 0 || target_x >= gameboard.canvas.width || target_y >= gameboard.canvas.height) {
+    return true;
   }
 
   this.clear();
