@@ -100,6 +100,7 @@ function Gameboard(id, rows, cols, players, current_player) {
   this.ctx = this.canvas.getContext('2d');
   this.cellHeight = this.canvas.height / rows;
   this.cellWidth = this.canvas.width /cols;
+  this.animationLayer = document.getElementById(id + "Mask");
 
   if (typeof players === 'undefined') {
     var temp    = [new Player(null, null, this, 'player1'), new Player(null, null, this, 'player2')],
@@ -183,6 +184,10 @@ Player.prototype.draw = function (x, y) {
   gameboard.ctx.beginPath();
   //clear the cell
   gameboard.ctx.clearRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
+  if (gameboard.current_player == this.name) {
+    gameboard.ctx.fillStyle = 'blue';
+    gameboard.ctx.fillRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
+  }
   gameboard.ctx.moveTo(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2));
   gameboard.ctx.arc(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2), radius, 0, Math.PI * 2);
   gameboard.ctx.clip();
@@ -194,8 +199,21 @@ Player.prototype.draw = function (x, y) {
   // restore original context
   gameboard.ctx.restore();};
 
+/**
+ * Moves the player to specified (row, col)
+ * @param  {[type]} row [description]
+ * @param  {[type]} col [description]
+ * @return {[type]}     [description]
+ */
 Player.prototype.move = function (row, col) {
-  // body...
+  var target_x = this.cellWidth * row,
+      target_y = this.cellHeight * col,
+      animlayr = {
+        'canvas' : gameboard.animationLayer,
+        'ctx'    : gameboard.animationLayer.getContext('2d')
+      };
+
+  console.log(animlayr);
 };
 
 // repoint constructor
@@ -206,18 +224,15 @@ Player.prototype.constructor = Player;
  * @param {[type]} gameinfoId [description]
  */
 function GameInfo(gameinfoId) {
-  this.canvas = document.getElementById(gameinfoId);
-  this.ctx = this.canvas.getContext('2d');
 }
 
 /**
  * Stores the player's relevant information
- * @param {[type]} playerinfoId [description]
+ * @param {[type]} playerActionId [description]
  * @param {[type]} player_name  [description]
  */
-function PlayerInfo(playerinfoId, player_name) {
-  this.canvas = document.getElementById(playerinfoId);
-  this.ctx = this.canvas.getContext('2d');
+function PlayerActions(playerActionId, player_name) {
+  this.canvas = document.getElementById(playerActionId);
   this.player = gameboard.players[player_name];
 }
 

@@ -9,9 +9,9 @@
       text-align: center;
     }
 
-    canvas#gameinfo,
-    canvas#gameboardMask,
-    canvas#playerinfo {
+    #gameinfo,
+    #gameboardMask,
+    #playerActions {
       position: absolute;
     }
 
@@ -34,8 +34,13 @@
   <h1>Demo Gameboard</h1>
   <canvas id="gameboard" width="300" height="300"></canvas>
   <canvas id="gameboardMask" width="300" height="300"></canvas>
-  <canvas id="gameinfo" width="300" height="300"></canvas>
-  <canvas id="playerinfo" width="300" height="300"></canvas>
+  <div id="gameinfo" width="300" height="300"></div>
+  <div id="playerActions" width="300" height="300">
+    <button type="button" name="left">Move Left</button>
+    <button type="button" name="up">Move Up</button>
+    <button type="button" name="right">Move Right</button>
+    <button type="button" name="down">Move Down</button>
+  </div>
   <section>
     <h2>Select Board Size</h2>
     <select class="" name="board_size">
