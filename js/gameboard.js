@@ -10,17 +10,20 @@ var gameboard, currentCell, hoveredCell;
  * Object for each game cell
  * @param {[type]} row       row of cell (0 indexed)
  * @param {[type]} col       column of cell (0 indexed)
- * @param {[type]} x         x coord of top left corner
- * @param {[type]} y         y coord of top left corner
+ * @param {bool}   uncovered defaults to false
  */
-function Cell(row, col) {
+function Cell(row, col, uncovered) {
   this.cellWidth = gameboard.cellWidth;
   this.cellHeight = gameboard.cellHeight;
 
   this.setRow(row);
   this.setCol(col);
 
-  this.uncovered = false;
+  if (typeof uncovered !== 'undefined') {
+    this.uncovered = uncovered;
+  } else {
+    this.uncovered = false;
+  }
 }
 
 /**
@@ -127,7 +130,7 @@ function Gameboard(id, rows, cols, players, current_player) {
     this.board.push([i])
 
     for (var j = 0; j < cols; j++) {
-      this.board[i][j] = (new Cell(i, j, this));
+      this.board[i][j] = (new Cell(i, j, false));
     }
   }
 }
@@ -223,13 +226,47 @@ Player.prototype.draw = function (x, y, canvas) {
 Player.prototype.move = function (row, col) {
   var target_x = this.cellWidth * col,
       target_y = this.cellHeight * row,
+      x        = this.x,
+      y        = this.y,
+      player   = this,
       animlayr = {
         'canvas' : gameboard.animationLayer,
         'ctx'    : gameboard.animationLayer.getContext('2d')
       };
 
   this.clear();
-  this.draw(target_x, target_y, animlayr);
+  // window.requestAnimationFrame(function render() {
+  //   while (x !== target_x || y !== target_y) {
+  //     if (x < target_x) {
+  //       x++;
+  //     } else if (x > target_x) {
+  //       x--;
+  //     }
+  //
+  //     if (y < target_y) {
+  //       y++;
+  //     } else if (y > target_y) {
+  //       y--;
+  //     }
+  //
+  //     player.clear();
+  //     player.x = x;
+  //     player.y = y;
+  //     // console.log(player);
+  //     player.draw(x,y,animlayr);
+  //     window.requestAnimationFrame(render);
+  //   }
+  // });
+  // console.log('hey');
+  // console.log(animlayr.ctx);
+  // animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
+  this.draw(target_x, target_y, gameboard);
+
+  //save position in gameboard
+  gameboard.board[this.row][this.col] = new Cell(row, col, true);
+  gameboard.board[row][col]           = this;
+  this.setRow(row);
+  this.setCol(col);
 
   return true;
 };
@@ -259,27 +296,20 @@ PlayerActions.prototype.setListeners = function () {
   var player_action = this;
 
   $('.action-btn').on('click', function(event) {
+    console.log(player_action);
     if (!player_action.action_occuring) {
       player_action.action_occuring = true;
 
-      var direction = event.target.name,
-          promise   = new Promise(function(resolve, reject) {
+      var direction = event.target.name;
 
-            if (player_action.movePlayer(direction)) {
-              console.log('sup');
-              resolve();
-            }
-      });
-
-      promise.then(function(){
-        player_action.action_occuring = false;
-      });
+      player_action.movePlayer(direction);
     }
   });
 };
 
 PlayerActions.prototype.movePlayer = function (direction) {
-  var player     = this.player,
+  var player_act = this,
+      player     = this.player,
       target_row = player.row,
       target_col = player.col;
 
@@ -303,12 +333,15 @@ PlayerActions.prototype.movePlayer = function (direction) {
 
   var promise    = new Promise(function(resolve, reject) {
     if (player.move(target_row, target_col)) {
-      resolve();
+      console.log('sup');
+      resolve(true);
     }
   });
 
-  promise.then(function(){
-    return true;
+  promise.then(function(result){
+    console.log('then');
+    console.log(result);
+    player_act.action_occuring = false;
   });
 };
 
