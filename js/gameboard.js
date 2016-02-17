@@ -61,6 +61,10 @@ Cell.prototype.draw = function() {
   }
 }
 
+/**
+ * Empties cell of contents
+ * @return {[type]} [description]
+ */
 Cell.prototype.clear = function () {
   gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
 };
@@ -167,8 +171,8 @@ Player.prototype.unHighlight = function () {
  * @param  {[type]} y y coord of top left corner (defaults to stored value)
  * @return {[type]}   [description]
  */
-Player.prototype.draw = function (x, y) {
-  var x_coord, y_coord;
+Player.prototype.draw = function (x, y, canvas) {
+  var x_coord, y_coord, canvas;
 
   if (typeof x !== 'undefined') {
     x_coord = x;
@@ -182,27 +186,33 @@ Player.prototype.draw = function (x, y) {
     y_coord = this.y;
   }
 
+  if (typeof canvas !== 'undefined') {
+    canvas = canvas;
+  } else {
+    canvas = gameboard;
+  }
+
   var radius = (this.cellWidth / 2) - 1;
   // save original context - becuase we will be defining a clip
-  gameboard.ctx.save();
+  canvas.ctx.save();
 
-  gameboard.ctx.beginPath();
+  canvas.ctx.beginPath();
   //clear the cell
-  gameboard.ctx.clearRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
+  canvas.ctx.clearRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
   if (gameboard.current_player == this.name) {
-    gameboard.ctx.fillStyle = 'blue';
-    gameboard.ctx.fillRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
+    canvas.ctx.fillStyle = 'blue';
+    canvas.ctx.fillRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
   }
-  gameboard.ctx.moveTo(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2));
-  gameboard.ctx.arc(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2), radius, 0, Math.PI * 2);
-  gameboard.ctx.clip();
-  gameboard.ctx.drawImage(this.avatar, x_coord, y_coord, this.cellWidth, this.cellHeight);
+  canvas.ctx.moveTo(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2));
+  canvas.ctx.arc(x_coord + (this.cellWidth/2), y_coord + (this.cellHeight/2), radius, 0, Math.PI * 2);
+  canvas.ctx.clip();
+  canvas.ctx.drawImage(this.avatar, x_coord, y_coord, this.cellWidth, this.cellHeight);
 
-  gameboard.ctx.closePath();
-  gameboard.ctx.stroke();
+  canvas.ctx.closePath();
+  canvas.ctx.stroke();
 
   // restore original context
-  gameboard.ctx.restore();};
+  canvas.ctx.restore();};
 
 /**
  * Moves the player to specified (row, col)
@@ -211,19 +221,17 @@ Player.prototype.draw = function (x, y) {
  * @return {[type]}     [description]
  */
 Player.prototype.move = function (row, col) {
-  // setTimeout(function() {
+  var target_x = this.cellWidth * col,
+      target_y = this.cellHeight * row,
+      animlayr = {
+        'canvas' : gameboard.animationLayer,
+        'ctx'    : gameboard.animationLayer.getContext('2d')
+      };
 
-    var target_x = this.cellWidth * row,
-        target_y = this.cellHeight * col,
-        animlayr = {
-          'canvas' : gameboard.animationLayer,
-          'ctx'    : gameboard.animationLayer.getContext('2d')
-        };
+  this.clear();
+  this.draw(target_x, target_y, animlayr);
 
-    console.log(animlayr);
-
-    return true;
-  // }, 2000);
+  return true;
 };
 
 // repoint constructor
@@ -273,12 +281,7 @@ PlayerActions.prototype.setListeners = function () {
 PlayerActions.prototype.movePlayer = function (direction) {
   var player     = this.player,
       target_row = player.row,
-      target_col = player.col,
-      promise    = new Promise(function(resolve, reject) {
-        if (player.move(target_row, target_col)) {
-          resolve();
-        }
-      });;
+      target_col = player.col;
 
   switch (direction) {
     case 'left':
@@ -297,6 +300,12 @@ PlayerActions.prototype.movePlayer = function (direction) {
       target_row++;
       break;
   }
+
+  var promise    = new Promise(function(resolve, reject) {
+    if (player.move(target_row, target_col)) {
+      resolve();
+    }
+  });
 
   promise.then(function(){
     return true;
