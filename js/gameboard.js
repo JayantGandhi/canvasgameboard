@@ -236,6 +236,10 @@ Player.prototype.move = function (row, col) {
         'ctx'    : gameboard.animationLayer.getContext('2d')
       };
 
+  if (target_x < 0 || target_y < 0) {
+    return false;
+  }
+
   this.clear();
   // window.requestAnimationFrame(function render() {
   //   while (x !== target_x || y !== target_y) {
