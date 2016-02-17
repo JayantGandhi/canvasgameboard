@@ -61,6 +61,10 @@ Cell.prototype.draw = function() {
   }
 }
 
+Cell.prototype.clear = function () {
+  gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+};
+
 /**
  * Highlights the given cell
  * @return {[type]} [description]
@@ -75,7 +79,8 @@ Cell.prototype.highlight = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.unHighlight = function () {
-  gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  // gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  this.clear();
   gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   this.draw();
 };
@@ -206,14 +211,19 @@ Player.prototype.draw = function (x, y) {
  * @return {[type]}     [description]
  */
 Player.prototype.move = function (row, col) {
-  var target_x = this.cellWidth * row,
-      target_y = this.cellHeight * col,
-      animlayr = {
-        'canvas' : gameboard.animationLayer,
-        'ctx'    : gameboard.animationLayer.getContext('2d')
-      };
+  // setTimeout(function() {
 
-  console.log(animlayr);
+    var target_x = this.cellWidth * row,
+        target_y = this.cellHeight * col,
+        animlayr = {
+          'canvas' : gameboard.animationLayer,
+          'ctx'    : gameboard.animationLayer.getContext('2d')
+        };
+
+    console.log(animlayr);
+
+    return true;
+  // }, 2000);
 };
 
 // repoint constructor
@@ -231,10 +241,67 @@ function GameInfo(gameinfoId) {
  * @param {[type]} playerActionId [description]
  * @param {[type]} player_name  [description]
  */
-function PlayerActions(playerActionId, player_name) {
+function PlayerActions(playerActionId) {
   this.canvas = document.getElementById(playerActionId);
-  this.player = gameboard.players[player_name];
+  this.player = gameboard.players[gameboard.current_player];
+  this.action_occuring = false;
 }
+
+PlayerActions.prototype.setListeners = function () {
+  var player_action = this;
+
+  $('.action-btn').on('click', function(event) {
+    if (!player_action.action_occuring) {
+      player_action.action_occuring = true;
+
+      var direction = event.target.name,
+          promise   = new Promise(function(resolve, reject) {
+
+            if (player_action.movePlayer(direction)) {
+              console.log('sup');
+              resolve();
+            }
+      });
+
+      promise.then(function(){
+        player_action.action_occuring = false;
+      });
+    }
+  });
+};
+
+PlayerActions.prototype.movePlayer = function (direction) {
+  var player     = this.player,
+      target_row = player.row,
+      target_col = player.col,
+      promise    = new Promise(function(resolve, reject) {
+        if (player.move(target_row, target_col)) {
+          resolve();
+        }
+      });;
+
+  switch (direction) {
+    case 'left':
+      target_col--;
+      break;
+
+    case 'up':
+      target_row--;
+      break;
+
+    case 'right':
+      target_col++;
+      break;
+
+    case 'down':
+      target_row++;
+      break;
+  }
+
+  promise.then(function(){
+    return true;
+  });
+};
 
 /**
  * Draws the gameboard

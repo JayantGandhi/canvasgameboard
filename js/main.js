@@ -46,7 +46,7 @@ function initBoard(boardId, rows, cols) {
 
 function initInfo(gameInfoId, playerActionId) {
   var gameinfo,
-      playerinfo,
+      playeractions,
       canvasSize = Math.floor(window.innerHeight * .3);
 
   $("#" + gameInfoId).attr({
@@ -60,5 +60,6 @@ function initInfo(gameInfoId, playerActionId) {
   });
 
   gameinfo = new GameInfo(gameInfoId);
-  playerinfo = new PlayerActions(playerActionId, 'player1')
+  playeractions = new PlayerActions(playerActionId);
+  playeractions.setListeners();
 }
