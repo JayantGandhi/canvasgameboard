@@ -269,11 +269,15 @@ Player.prototype.move = function (row, col) {
   this.draw(target_x, target_y, gameboard);
 
   //save position in gameboard
-  gameboard.board[this.row][this.col] = new Cell(row, col, true);
+  gameboard.board[this.row][this.col] = new Cell(this.row, this.col, true);
   gameboard.board[this.row][this.col].draw();
   gameboard.board[row][col]           = this;
   this.setRow(row);
   this.setCol(col);
+
+  // reset listeners on gameboard
+  gameboard.unsetListeners();
+  gameboard.setListeners();
 
   return true;
 };
@@ -344,8 +348,6 @@ PlayerActions.prototype.movePlayer = function (direction) {
   });
 
   promise.then(function(result){
-    gameboard.unsetListeners();
-    gameboard.setListeners();
     player_act.action_occuring = false;
   });
 };
