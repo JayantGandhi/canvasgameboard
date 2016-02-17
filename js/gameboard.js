@@ -61,6 +61,8 @@ Cell.prototype.draw = function() {
     // gameboard.ctx.restore();
     gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
     gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  } else {
+    gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   }
 }
 
@@ -264,6 +266,7 @@ Player.prototype.move = function (row, col) {
 
   //save position in gameboard
   gameboard.board[this.row][this.col] = new Cell(row, col, true);
+  gameboard.board[this.row][this.col].draw();
   gameboard.board[row][col]           = this;
   this.setRow(row);
   this.setCol(col);
@@ -296,7 +299,6 @@ PlayerActions.prototype.setListeners = function () {
   var player_action = this;
 
   $('.action-btn').on('click', function(event) {
-    console.log(player_action);
     if (!player_action.action_occuring) {
       player_action.action_occuring = true;
 
@@ -333,14 +335,11 @@ PlayerActions.prototype.movePlayer = function (direction) {
 
   var promise    = new Promise(function(resolve, reject) {
     if (player.move(target_row, target_col)) {
-      console.log('sup');
       resolve(true);
     }
   });
 
   promise.then(function(result){
-    console.log('then');
-    console.log(result);
     player_act.action_occuring = false;
   });
 };
