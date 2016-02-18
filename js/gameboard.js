@@ -75,8 +75,10 @@ Cell.prototype.clear = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.highlight = function () {
-  gameboard.ctx.fillStyle = 'rgba(0,0,0,0.5)';
-  gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  if (!this.uncovered) {
+    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
+  }
 };
 
 /**
@@ -84,8 +86,10 @@ Cell.prototype.highlight = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.unHighlight = function () {
-  this.clear();
-  this.draw();
+  if (!this.uncovered) {
+    this.clear();
+    this.draw();
+  }
 };
 
 /**
