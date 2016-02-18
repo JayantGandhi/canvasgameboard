@@ -401,6 +401,7 @@ PlayerActions.prototype.movePlayer = function (direction) {
       });
     });
   } else {
+    player_act.action_occuring = false;
     return false;
   }
 };
