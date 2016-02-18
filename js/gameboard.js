@@ -98,7 +98,6 @@ Cell.prototype.uncover = function (callback) {
       opacity = 0.3;
 
   window.requestAnimationFrame(function fadeIn(){
-    console.log(opacity);
     if (opacity > 0) {
       cell.clear();
       cell.draw(opacity)
