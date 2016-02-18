@@ -9,6 +9,7 @@ window.onload = function() {
         cols = parseInt(select[0].value.substr(select[0].value.indexOf('x') + 1, select[0].value.length));
 
     initBoard('gameboard', rows, cols);
+    initInfo('gameinfo', 'playerActions');
   }
 
   var gameboard = initBoard('gameboard', 8, 8);
@@ -61,5 +62,6 @@ function initInfo(gameInfoId, playerActionId) {
 
   gameinfo = new GameInfo(gameInfoId);
   playeractions = new PlayerActions(playerActionId);
+  playeractions.unsetListeners();
   playeractions.setListeners();
 }

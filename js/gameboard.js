@@ -228,16 +228,15 @@ Player.prototype.draw = function (x, y, canvas) {
 Player.prototype.move = function (row, col) {
   var target_x = this.cellWidth * col,
       target_y = this.cellHeight * row,
-      x        = this.x,
-      y        = this.y,
+      x        = Math.floor(this.x),
+      y        = Math.floor(this.y),
       player   = this,
+      x_step   = 1,//Math.abs((target_x - x)/60),
+      y_step   = 1,//Math.abs((target_y - y)/60),
       animlayr = {
         'canvas' : gameboard.animationLayer,
         'ctx'    : gameboard.animationLayer.getContext('2d')
       };
-
-  console.log(target_x);
-  console.log(gameboard.canvas.width);
 
   if (target_x < 0 || target_y < 0 || target_x >= gameboard.canvas.width || target_y >= gameboard.canvas.height) {
     return true;
@@ -245,29 +244,29 @@ Player.prototype.move = function (row, col) {
 
   this.clear();
   window.requestAnimationFrame(function render() {
-    if (x !== target_x || y !== target_y) {
+    if (x !== Math.floor(target_x) || y !== Math.floor(target_y)) {
       if (x < target_x) {
-        x++;
+        x += x_step;
       } else if (x > target_x) {
-        x--;
+        x -= x_step;
       }
 
       if (y < target_y) {
-        y++;
+        y += y_step;
       } else if (y > target_y) {
-        y--;
+        y -= y_step;
       }
 
       player.clear();
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
-      player.x = x;
-      player.y = y;
       // console.log(player);
       player.draw(x,y,animlayr);
       window.requestAnimationFrame(render);
     } else {
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
-      this.draw(target_x, target_y, gameboard);
+      player.draw(target_x, target_y, gameboard);
+      player.x = target_x;
+      player.y = target_y;
     }
   });
 
@@ -321,6 +320,10 @@ PlayerActions.prototype.setListeners = function () {
     }
   });
 };
+
+PlayerActions.prototype.unsetListeners = function () {
+  $('.action-btn').off('click');
+}
 
 PlayerActions.prototype.movePlayer = function (direction) {
   var player_act = this,
