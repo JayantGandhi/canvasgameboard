@@ -380,6 +380,7 @@ PlayerActions.prototype.movePlayer = function (direction) {
   //uncover that cell
   gameboard.board[target_row][target_col].uncover(function(){
     player.move(target_row, target_col);
+    player_act.action_occuring = false;
   });
 };
 
