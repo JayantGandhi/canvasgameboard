@@ -244,32 +244,34 @@ Player.prototype.move = function (row, col) {
   }
 
   this.clear();
-  // window.requestAnimationFrame(function render() {
-  //   while (x !== target_x || y !== target_y) {
-  //     if (x < target_x) {
-  //       x++;
-  //     } else if (x > target_x) {
-  //       x--;
-  //     }
-  //
-  //     if (y < target_y) {
-  //       y++;
-  //     } else if (y > target_y) {
-  //       y--;
-  //     }
-  //
-  //     player.clear();
-  //     player.x = x;
-  //     player.y = y;
-  //     // console.log(player);
-  //     player.draw(x,y,animlayr);
-  //     window.requestAnimationFrame(render);
-  //   }
-  // });
-  // console.log('hey');
-  // console.log(animlayr.ctx);
-  // animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
-  this.draw(target_x, target_y, gameboard);
+  window.requestAnimationFrame(function render() {
+    if (x !== target_x || y !== target_y) {
+      if (x < target_x) {
+        x++;
+      } else if (x > target_x) {
+        x--;
+      }
+
+      if (y < target_y) {
+        y++;
+      } else if (y > target_y) {
+        y--;
+      }
+
+      player.clear();
+      animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
+      player.x = x;
+      player.y = y;
+      // console.log(player);
+      player.draw(x,y,animlayr);
+      window.requestAnimationFrame(render);
+    } else {
+      animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
+      this.draw(target_x, target_y, gameboard);
+    }
+  });
+
+
 
   //save position in gameboard
   gameboard.board[this.row][this.col] = new Cell(this.row, this.col, true);
