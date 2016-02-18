@@ -50,16 +50,12 @@ Cell.prototype.setCol = function(col) {
  * Draws the cell
  * @return {[type]} [description]
  */
-Cell.prototype.draw = function() {
+Cell.prototype.draw = function(opacity) {
+  var opacity = opacity || 0.3;
+
   if (!this.uncovered) {
-    // var font = (Math.floor(this.cellHeight * .75)).toString() + "px serif";
-    // gameboard.ctx.save();
-    // gameboard.ctx.font = font;
-    // gameboard.ctx.textBaseline = 'middle';
-    // gameboard.ctx.textAlign = 'center';
-    // gameboard.ctx.fillText('?', this.x + (this.cellWidth/2), this.y + (this.CellHeight/2));
-    // gameboard.ctx.restore();
-    gameboard.ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    gameboard.ctx.fillStyle = 'rgba(0,0,0,' + opacity +')';
+    gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
     gameboard.ctx.fillRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   } else {
     gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
@@ -88,12 +84,46 @@ Cell.prototype.highlight = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.unHighlight = function () {
-  // gameboard.ctx.clearRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   this.clear();
-  gameboard.ctx.strokeRect(this.x, this.y, gameboard.cellWidth, gameboard.cellHeight);
   this.draw();
 };
 
+/**
+ * Marks the cell as uncovered
+ * @param  callback  optional callback
+ * @return {[type]} [description]
+ */
+Cell.prototype.uncover = function (callback) {
+  var cell = this,
+      opacity = 0.3;
+
+  window.requestAnimationFrame(function fadeIn(){
+    console.log(opacity);
+    if (opacity > 0) {
+      cell.clear();
+      cell.draw(opacity)
+      opacity -= 0.01;
+      window.requestAnimationFrame(fadeIn);
+    } else {
+      cell.uncovered = true;
+      typeof callback === 'function' && callback();
+    }
+  });
+};
+
+function GameEvent(title, description, points, penalty) {
+
+  this.description = description || '';
+  this.title = title || '';
+  this.points = points || '';
+  this.penalty = penalty || '';
+}
+
+GameEvent.prototype = Object.create(Cell.prototype);
+
+GameEvent.prototype.unCover = function () {
+  Cell.call(this);
+}
 
 /**
  * Defines the Gameboard object
@@ -261,11 +291,9 @@ Player.prototype.move = function (row, col) {
 
       player.clear();
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
-      // console.log(player);
       player.draw(x,y,animlayr);
       window.requestAnimationFrame(render);
     } else {
-      console.log('finished');
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
       player.draw(target_x, target_y, gameboard);
       player.x = target_x;
@@ -285,8 +313,6 @@ Player.prototype.move = function (row, col) {
   // reset listeners on gameboard
   gameboard.unsetListeners();
   gameboard.setListeners();
-
-  return true;
 };
 
 // repoint constructor
@@ -352,14 +378,9 @@ PlayerActions.prototype.movePlayer = function (direction) {
       break;
   }
 
-  var promise    = new Promise(function(resolve, reject) {
-    if (player.move(target_row, target_col)) {
-      resolve(true);
-    }
-  });
-
-  promise.then(function(result){
-    player_act.action_occuring = false;
+  //uncover that cell
+  gameboard.board[target_row][target_col].uncover(function(){
+    player.move(target_row, target_col);
   });
 };
 
