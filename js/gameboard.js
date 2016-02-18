@@ -226,14 +226,16 @@ Player.prototype.draw = function (x, y, canvas) {
  * @return {[type]}     [description]
  */
 Player.prototype.move = function (row, col) {
-  var target_x = this.cellWidth * col,
-      target_y = this.cellHeight * row,
-      x        = Math.floor(this.x),
-      y        = Math.floor(this.y),
-      player   = this,
-      x_step   = 1,//Math.abs((target_x - x)/60),
-      y_step   = 1,//Math.abs((target_y - y)/60),
-      animlayr = {
+  var target_x      = this.cellWidth * col,
+      target_y      = this.cellHeight * row,
+      anim_target_x = Math.floor(target_x),
+      anim_target_y = Math.floor(target_y),
+      x             = Math.floor(this.x),
+      y             = Math.floor(this.y),
+      player        = this,
+      x_step        = 1,//Math.abs((target_x - x)/60),
+      y_step        = 1,//Math.abs((target_y - y)/60),
+      animlayr      = {
         'canvas' : gameboard.animationLayer,
         'ctx'    : gameboard.animationLayer.getContext('2d')
       };
@@ -244,16 +246,16 @@ Player.prototype.move = function (row, col) {
 
   this.clear();
   window.requestAnimationFrame(function render() {
-    if (x !== Math.floor(target_x) || y !== Math.floor(target_y)) {
-      if (x < target_x) {
+    if (x !== anim_target_x || y !== anim_target_y) {
+      if (x < anim_target_x) {
         x += x_step;
-      } else if (x > target_x) {
+      } else if (x > anim_target_x) {
         x -= x_step;
       }
 
-      if (y < target_y) {
+      if (y < anim_target_y) {
         y += y_step;
-      } else if (y > target_y) {
+      } else if (y > anim_target_y) {
         y -= y_step;
       }
 
@@ -263,6 +265,7 @@ Player.prototype.move = function (row, col) {
       player.draw(x,y,animlayr);
       window.requestAnimationFrame(render);
     } else {
+      console.log('finished');
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
       player.draw(target_x, target_y, gameboard);
       player.x = target_x;
