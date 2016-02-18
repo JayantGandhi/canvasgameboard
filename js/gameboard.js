@@ -228,13 +228,13 @@ Player.prototype.draw = function (x, y, canvas) {
 Player.prototype.move = function (row, col) {
   var target_x      = this.cellWidth * col,
       target_y      = this.cellHeight * row,
-      anim_target_x = Math.floor(target_x),
-      anim_target_y = Math.floor(target_y),
-      x             = Math.floor(this.x),
-      y             = Math.floor(this.y),
+      anim_target_x = Math.floor(target_x), //this should change with a fixed canvas
+      anim_target_y = Math.floor(target_y), //rounding errors mean I have to fudge
+      x             = Math.floor(this.x),   //the numbers a little here to make the
+      y             = Math.floor(this.y),   //animation actually end
       player        = this,
-      x_step        = 1,//Math.abs((target_x - x)/60),
-      y_step        = 1,//Math.abs((target_y - y)/60),
+      x_step        = 1,
+      y_step        = 1,
       animlayr      = {
         'canvas' : gameboard.animationLayer,
         'ctx'    : gameboard.animationLayer.getContext('2d')

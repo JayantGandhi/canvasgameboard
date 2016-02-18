@@ -18,7 +18,7 @@ window.onload = function() {
 
 function initBoard(boardId, rows, cols) {
   var gameboard,
-      canvasSize = Math.floor(window.innerHeight * .8);
+      canvasSize = Math.floor((window.innerHeight * .8)/10) * 10;
 
   //set the size of the canvas based on the window
   $("#" + boardId).attr({
