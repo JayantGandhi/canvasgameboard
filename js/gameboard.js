@@ -134,7 +134,8 @@ GameEvent.prototype.unCover = function () {
 function Gameboard(id, rows, cols, players, current_player) {
   var id   = typeof id !== 'undefined' ? id : 'gameboard',
       rows = typeof rows !== 'undefined' ? rows : 5,
-      cols = typeof cols !== 'undefined' ? cols : 5;
+      cols = typeof cols !== 'undefined' ? cols : 5,
+      players_lookup = [];
 
   gameboard = this;
 
@@ -146,15 +147,16 @@ function Gameboard(id, rows, cols, players, current_player) {
   this.animationLayer = document.getElementById(id + "Mask");
 
   if (typeof players === 'undefined') {
-    var temp    = [new Player(null, null, this, 'player1'), new Player(null, null, this, 'player2')],
-        players = [];
-
-    for (var i = 0; i < temp.length; i++) {
-      players[temp[i].name] = temp[i];
-    }
+    var players = [new Player(null, null, this, 'player1'), new Player(null, null, this, 'player2')];
   }
 
+  for (var i = 0; i < players.length; i++) {
+    players_lookup[players[i].name] = players[i];
+  }
+
+
   this.players = players;
+  this.players_lookup = players_lookup;
   this.current_player = current_player;
 
   for (var i = 0; i < rows; i++) {
@@ -332,8 +334,14 @@ function GameInfo(gameinfoId) {
  */
 function PlayerActions(playerActionId) {
   this.canvas = document.getElementById(playerActionId);
-  this.player = gameboard.players[gameboard.current_player];
+  this.player = gameboard.players_lookup[gameboard.current_player];
   this.action_occuring = false;
+}
+
+PlayerActions.prototype.nextTurn = function (player) {
+  this.player = gameboard.players_lookup[gameboard.current_player];
+  // this.unsetListeners();
+  // this.setListeners();
 }
 
 PlayerActions.prototype.setListeners = function () {
@@ -425,7 +433,7 @@ Gameboard.prototype.drawBoard = function () {
 Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   var x      = (this.cellWidth * (col)),
       y      = (this.cellHeight * (row)),
-      player = this.players[playerId];
+      player = this.players_lookup[playerId];
 
   //save player position
   player.setRow(row);
@@ -437,7 +445,8 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
 Gameboard.prototype.nextTurn = function() {
   this.current_player = 'player1';
-  this.players[this.current_player].draw();
+  console.log(this.players_lookup);
+  this.players_lookup[this.current_player].draw();
 }
 
 Gameboard.prototype.setListeners = function () {

@@ -63,4 +63,8 @@ function initInfo(gameInfoId, playerActionId) {
   playeractions = new PlayerActions(playerActionId);
   playeractions.unsetListeners();
   playeractions.setListeners();
+
+  $(document).one('turnEnd', function(){
+    playeractions.nextTurn();
+  })
 }
