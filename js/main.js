@@ -27,8 +27,7 @@ function initBoard(boardId, rows, cols) {
   });
   $("#" + boardId + "Mask").attr({
     'width'  : canvasSize,
-    'height' : canvasSize,
-    'style'  : 'margin-left:' + (0 - canvasSize) + 'px'
+    'height' : canvasSize
   });
 
   gameboard = new Gameboard(boardId, rows, cols);
