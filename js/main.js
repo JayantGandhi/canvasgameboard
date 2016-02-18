@@ -6,7 +6,8 @@ window.onload = function() {
   var boardSubmit  = document.getElementById('boardSizeSubmit'),
       boardSelect  = document.getElementsByName('board_size'),
       playerSubmit = document.getElementById('playerCountSubmit'),
-      playerSelect = document.getElementsByName('player_count');
+      playerSelect = document.getElementsByName('player_count'),
+      boardSize    = Math.floor((window.innerHeight * .8)/10) * 10;
 
   boardSubmit.onclick = function() {
     rows  = parseInt(boardSelect[0].value.substr(0, boardSelect[0].value.indexOf('x')));
@@ -21,6 +22,13 @@ window.onload = function() {
 
     var board = initBoard('gameboard', rows, cols, player_count);
     initInfo('gameinfo', 'playerActions');
+  }
+
+  document.getElementById('showMap').onclick = function() {
+    $('#background').css({
+      'width'  : boardSize + 'px',
+      'height' : boardSize + 'px'
+    });
   }
 
   var gameboard = initBoard('gameboard', 8, 8);

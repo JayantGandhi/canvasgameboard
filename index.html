@@ -30,6 +30,17 @@
       right: 0;
       margin: 0 auto;
     }
+
+    #background {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      background-image: url('/images/map.png');
+      z-index: -1;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
   </style>
 </head>
 
@@ -37,6 +48,7 @@
   <!-- <a target="_blank" class='btn' href="https://github.com/JayantGandhi/canvasgameboard/tree/gh-pages">View on Github</a> -->
   <img id="userAvatar" src="images/user_avatar.jpg" style="display:none;" alt="" />
   <h1>Demo Gameboard</h1>
+  <div id="background"></div>
   <canvas id="gameboard" width="300" height="300"></canvas>
   <canvas id="gameboardMask" width="300" height="300"></canvas>
   <div id="gameinfo" width="300" height="300"></div>
@@ -76,6 +88,9 @@
       <option value="8">8</option> -->
     </select>
     <button id="playerCountSubmit" type="button" name="player_count_submit">Submit</button>
+  </section>
+  <section>
+    <button id="showMap" type="button" name="button">Map?</button>
   </section>
 </body>
 

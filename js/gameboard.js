@@ -127,6 +127,7 @@ GameEvent.prototype = Object.create(Cell.prototype);
 
 GameEvent.prototype.uncover = function (callback) {
   Cell.prototype.uncover.call(this, callback);
+  // $('#gameinfo')
   // gameboard.ctx.fillStyle = 'green';
   // gameboard.ctx.fillRect(this.x, this.y, this.cellWidth, this.cellHeight);
 }
