@@ -254,7 +254,7 @@ Player.prototype.draw = function (x, y, canvas) {
  * @param  {[type]} col [description]
  * @return {[type]}     [description]
  */
-Player.prototype.move = function (row, col) {
+Player.prototype.move = function (row, col, callback) {
   var target_x      = this.cellWidth * col,
       target_y      = this.cellHeight * row,
       anim_target_x = Math.floor(target_x), //this should change with a fixed canvas
@@ -294,9 +294,10 @@ Player.prototype.move = function (row, col) {
       window.requestAnimationFrame(render);
     } else {
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
-      player.draw(target_x, target_y, gameboard);
       player.x = target_x;
       player.y = target_y;
+      typeof callback === 'function' && callback();
+      player.draw(target_x, target_y, gameboard);
     }
   });
 
@@ -379,8 +380,10 @@ PlayerActions.prototype.movePlayer = function (direction) {
 
   //uncover that cell
   gameboard.board[target_row][target_col].uncover(function(){
-    player.move(target_row, target_col);
-    player_act.action_occuring = false;
+    player.move(target_row, target_col, function(){
+      $(document).trigger('turnEnd');
+      player_act.action_occuring = false;
+    });
   });
 };
 
@@ -432,6 +435,11 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
   player.draw();
 }
 
+Gameboard.prototype.nextTurn = function() {
+  this.current_player = 'player1';
+  this.players[this.current_player].draw();
+}
+
 Gameboard.prototype.setListeners = function () {
   $(this.canvas).on('mousemove', function(event) {
     var $canvas = $(event.target),
@@ -462,6 +470,10 @@ Gameboard.prototype.setListeners = function () {
       $canvas.trigger('hovered_cell_changed');
     }
 
+  });
+  $(document).one('turnEnd', function(){
+    console.log('turn ovah');
+    gameboard.nextTurn();
   });
 };
 
