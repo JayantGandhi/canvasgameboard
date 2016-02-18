@@ -4,7 +4,7 @@
 * Creates the Gameboard prototype
 */
 
-var gameboard, currentCell, hoveredCell;
+var gameboard, currentCell, hoveredCell, playerActions;
 
 /**
  * Object for each game cell
@@ -141,22 +141,14 @@ function Gameboard(id, rows, cols, players, current_player) {
 
   this.canvas = document.getElementById(id);
   this.board = [];
+  this.cols = cols;
+  this.rows = rows;
   this.ctx = this.canvas.getContext('2d');
   this.cellHeight = this.canvas.height / rows;
   this.cellWidth = this.canvas.width /cols;
   this.animationLayer = document.getElementById(id + "Mask");
 
-  if (typeof players === 'undefined') {
-    var players = [new Player(null, null, this, 'player1'), new Player(null, null, this, 'player2')];
-  }
-
-  for (var i = 0; i < players.length; i++) {
-    players_lookup[players[i].name] = players[i];
-  }
-
-
-  this.players = players;
-  this.players_lookup = players_lookup;
+  this.setPlayers(players);
   this.current_player = current_player;
 
   for (var i = 0; i < rows; i++) {
@@ -167,6 +159,22 @@ function Gameboard(id, rows, cols, players, current_player) {
     }
   }
 }
+
+Gameboard.prototype.setPlayers = function (players) {
+  var players_lookup = [];
+
+  if (typeof players === 'undefined') {
+    var players = [new Player(null, null, this, 'player1'), new Player(null, null, this, 'player2')];
+  }
+
+  for (var i = 0; i < players.length; i++) {
+    players_lookup[players[i].name] = players[i];
+  }
+  this.players = players;
+  this.players_lookup = players_lookup;
+
+  this.current_player = players[0].name;
+};
 
 /**
  * Defines a player object
@@ -235,6 +243,7 @@ Player.prototype.draw = function (x, y, canvas) {
   canvas.ctx.beginPath();
   //clear the cell
   canvas.ctx.clearRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
+  canvas.ctx.strokeRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
   if (gameboard.current_player == this.name) {
     canvas.ctx.fillStyle = 'blue';
     canvas.ctx.fillRect(x_coord, y_coord, this.cellWidth, this.cellHeight);
@@ -246,7 +255,6 @@ Player.prototype.draw = function (x, y, canvas) {
 
   canvas.ctx.closePath();
   canvas.ctx.stroke();
-
   // restore original context
   canvas.ctx.restore();};
 
@@ -298,8 +306,8 @@ Player.prototype.move = function (row, col, callback) {
       animlayr.ctx.clearRect(0, 0, animlayr.canvas.width, animlayr.canvas.height);
       player.x = target_x;
       player.y = target_y;
-      typeof callback === 'function' && callback();
       player.draw(target_x, target_y, gameboard);
+      typeof callback === 'function' && callback();
     }
   });
 
@@ -333,6 +341,7 @@ function GameInfo(gameinfoId) {
  * @param {[type]} player_name  [description]
  */
 function PlayerActions(playerActionId) {
+  playerActions = this;
   this.canvas = document.getElementById(playerActionId);
   this.player = gameboard.players_lookup[gameboard.current_player];
   this.action_occuring = false;
@@ -340,8 +349,6 @@ function PlayerActions(playerActionId) {
 
 PlayerActions.prototype.nextTurn = function (player) {
   this.player = gameboard.players_lookup[gameboard.current_player];
-  // this.unsetListeners();
-  // this.setListeners();
 }
 
 PlayerActions.prototype.setListeners = function () {
@@ -385,14 +392,17 @@ PlayerActions.prototype.movePlayer = function (direction) {
       target_row++;
       break;
   }
-
-  //uncover that cell
-  gameboard.board[target_row][target_col].uncover(function(){
-    player.move(target_row, target_col, function(){
-      $(document).trigger('turnEnd');
-      player_act.action_occuring = false;
+  if (typeof gameboard.board[target_row] !== 'undefined' && typeof gameboard.board[target_row][target_col] !== 'undefined') {
+    //uncover that cell
+    gameboard.board[target_row][target_col].uncover(function(){
+      player.move(target_row, target_col, function(){
+        $(document).trigger('turnEnd');
+        player_act.action_occuring = false;
+      });
     });
-  });
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -437,16 +447,27 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
   //save player position
   player.setRow(row);
-  player.setCol(row);
+  player.setCol(col);
   this.board[row][col] = player;
 
   player.draw();
 }
 
 Gameboard.prototype.nextTurn = function() {
-  this.current_player = 'player1';
-  console.log(this.players_lookup);
+  var current_index = this.players.indexOf(this.players_lookup[this.current_player]);
+  console.log(current_index);
+  if (current_index === this.players.length - 1) {
+    this.current_player = this.players[0].name; //we are at the end of the array
+  } else {
+    this.current_player = this.players[current_index + 1].name;
+  }
+
+  //remove current player identifier
+  this.players[current_index].draw();
+  //add current player identifier
   this.players_lookup[this.current_player].draw();
+
+  playerActions.nextTurn();
 }
 
 Gameboard.prototype.setListeners = function () {
@@ -480,8 +501,7 @@ Gameboard.prototype.setListeners = function () {
     }
 
   });
-  $(document).one('turnEnd', function(){
-    console.log('turn ovah');
+  $(document).unbind('turnEnd').bind('turnEnd', function(event){
     gameboard.nextTurn();
   });
 };
