@@ -94,6 +94,10 @@ Cell.prototype.unHighlight = function () {
  * @return {[type]} [description]
  */
 Cell.prototype.uncover = function (callback) {
+  console.log('uncover');
+  if(this.constructor.name === 'GameEvent') {
+    console.log('gameevent');
+  }
   var cell = this,
       opacity = 0.3;
 
@@ -110,7 +114,8 @@ Cell.prototype.uncover = function (callback) {
   });
 };
 
-function GameEvent(title, description, points, penalty) {
+function GameEvent(row, col, uncovered, title, description, points, penalty) {
+  Cell.call(this, row, col, false);
 
   this.description = description || '';
   this.title = title || '';
@@ -120,9 +125,14 @@ function GameEvent(title, description, points, penalty) {
 
 GameEvent.prototype = Object.create(Cell.prototype);
 
-GameEvent.prototype.unCover = function () {
-  Cell.call(this);
+GameEvent.prototype.uncover = function (callback) {
+  Cell.prototype.uncover.call(this, callback);
+  // gameboard.ctx.fillStyle = 'green';
+  // gameboard.ctx.fillRect(this.x, this.y, this.cellWidth, this.cellHeight);
 }
+
+GameEvent.prototype.constructor = GameEvent;
+
 
 /**
  * Defines the Gameboard object
@@ -155,7 +165,11 @@ function Gameboard(id, rows, cols, players, current_player) {
     this.board.push([i])
 
     for (var j = 0; j < cols; j++) {
-      this.board[i][j] = (new Cell(i, j, false));
+      if (i % 2 === 0 && j % 2 === 0) {
+        this.board[i][j] = (new GameEvent(i, j, false));
+      } else {
+        this.board[i][j] = (new Cell(i, j, false));
+      }
     }
   }
 }
@@ -184,7 +198,7 @@ Gameboard.prototype.setPlayers = function (players) {
 function Player(x, y, gameboard, name, avatar_path) {
   var avatar;
 
-  Cell.call(this, x, y, gameboard);
+  Cell.call(this, x, y, true);
 
   if (typeof avatar_path !== 'undefined') {
     avatar = document.createElement('img');
@@ -456,7 +470,7 @@ Gameboard.prototype.drawPlayer = function(row, col, playerId) {
 
 Gameboard.prototype.nextTurn = function() {
   var current_index = this.players.indexOf(this.players_lookup[this.current_player]);
-  console.log(current_index);
+
   if (current_index === this.players.length - 1) {
     this.current_player = this.players[0].name; //we are at the end of the array
   } else {
